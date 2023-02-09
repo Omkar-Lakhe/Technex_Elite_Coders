@@ -1,201 +1,61 @@
-import { people01, people02, people03, Send, Shield, Star  } from "../assets";
+const express = require('express');
+const bodyParser = require('body-parser');
+// const ejs= require("ejs");
+const mongoose = require('mongoose');
 
-export const navLinks = [
-  {
-    id: "Home",
-    title: "Home",
-  },
-  {
-    id: "Signup",
-    title: "Signup",
-  },
-  {
-    id: "Services",
-    title: "Services",
-  },
-  {
-    id: "Blog",
-    title: "Blog",
-  },
-  {
-    id: "Contact",
-    title: "Contact",
-  },
-];
+const app = express();
+const cors = require('cors');
+// const { Router } = require('express');
+app.use(express.json());
+// console.log(process.env.API_KEY);
 
-export const features = [
-  {
-    id: "feature-1",
-    icon: Star,
-    title: "Rewards",
-    content:
-      "The best credit cards offer some tantalizing combinations of promotions and prizes",
-  },
-  {
-    id: "feature-2",
-    icon: Shield,
-    title: "100% Secured",
-    content:
-      "We take proactive steps make sure your information and transactions are secure.",
-  },
-  {
-    id: "feature-3",
-    icon: Send,
-    title: "Balance Transfer",
-    content:
-      "A balance transfer credit card can save you a lot of money in interest charges.",
-  },
-];
+app.use(express.static("public"));
+// app.set('view engine', 'ejs');
+// app.use(bodyParser.urlencoded({
+//     extended: true
+// }));
 
-export const feedback = [
-  {
-    id: "feedback-1",
-    content:
-      "Money is only a tool. It will take you wherever you wish, but it will not replace you as the driver.",
-    name: "Herman Jensen",
-    title: "Founder & Leader",
-    img: people01,
-  },
-  {
-    id: "feedback-2",
-    content:
-      "Money makes your life easier. If you're lucky to have it, you're lucky.",
-    name: "Steve Mark",
-    title: "Founder & Leader",
-    img: people02,
-  },
-  {
-    id: "feedback-3",
-    content:
-      "It is usually people in the money business, finance, and international trade that are really rich.",
-    name: "Kenn Gallagher",
-    title: "Founder & Leader",
-    img: people03,
-  },
-];
+mongoose.connect("mongodb+srv://Kamran:vUzQtTvmyj70jI15@cluster0.1svmwsn.mongodb.net/startup");
 
-export const stats = [
-  {
-    id: "stats-1",
-    title: "User Active",
-    value: "3800+",
-  },
-  {
-    id: "stats-2",
-    title: "Trusted by Company",
-    value: "230+",
-  },
-  {
-    id: "stats-3",
-    title: "Transaction",
-    value: "$230M+",
-  },
-];
+const userSchema = new mongoose.Schema({
+    email: String,
+    password: String
+});
 
-export const footerLinks = [
-  {
-    title: "Useful Links",
-    links: [
-      {
-        name: "Content",
-        link: "https://www.hoobank.com/content/",
-      },
-      {
-        name: "How it Works",
-        link: "https://www.hoobank.com/how-it-works/",
-      },
-      {
-        name: "Create",
-        link: "https://www.hoobank.com/create/",
-      },
-      {
-        name: "Explore",
-        link: "https://www.hoobank.com/explore/",
-      },
-      {
-        name: "Terms & Services",
-        link: "https://www.hoobank.com/terms-and-services/",
-      },
-    ],
-  },
-  {
-    title: "Community",
-    links: [
-      {
-        name: "Help Center",
-        link: "https://www.hoobank.com/help-center/",
-      },
-      {
-        name: "Partners",
-        link: "https://www.hoobank.com/partners/",
-      },
-      {
-        name: "Suggestions",
-        link: "https://www.hoobank.com/suggestions/",
-      },
-      {
-        name: "Blog",
-        link: "https://www.hoobank.com/blog/",
-      },
-      {
-        name: "Newsletters",
-        link: "https://www.hoobank.com/newsletters/",
-      },
-    ],
-  },
-  {
-    title: "Partner",
-    links: [
-      {
-        name: "Our Partner",
-        link: "https://www.hoobank.com/our-partner/",
-      },
-      {
-        name: "Become a Partner",
-        link: "https://www.hoobank.com/become-a-partner/",
-      },
-    ],
-  },
-];
+const User = new mongoose.model("User", userSchema);
 
-// export const socialMedia = [
-//   {
-//     id: "social-media-1",
-//     icon: instagram,
-//     link: "https://www.instagram.com/",
-//   },
-//   {
-//     id: "social-media-2",
-//     icon: facebook,
-//     link: "https://www.facebook.com/",
-//   },
-//   {
-//     id: "social-media-3",
-//     icon: twitter,
-//     link: "https://www.twitter.com/",
-//   },
-//   {
-//     id: "social-media-4",
-//     icon: linkedin,
-//     link: "https://www.linkedin.com/",
-//   },
-// ];
+app.post("/signupInvester", function(res, req){
+    const newUser = new User({
+        email: res.body.email ,
+        password: res.body.password,
+    });
+    newUser.save(function(err){
+        if(err){
+            console.log(err);
+        }else{
+            res.render("secrets");
+            console.log("success");
+        }
+    })
+})
 
-// export const clients = [
-//   {
-//     id: "client-1",
-//     logo: airbnb,
-//   },
-//   {
-//     id: "client-2",
-//     logo: binance,
-//   },
-//   {
-//     id: "client-3",
-//     logo: coinbase,
-//   },
-//   {
-//     id: "client-4",
-//     logo: dropbox,
-//   },
-// ];
+const Router = express.Router();
+
+Router.route('/').post( (req,res)=>{
+    const email = req.body.email;
+    const password = req.body.password;
+    const newUser = new User({
+        email, 
+        password,
+    })
+    newUser.save();
+});
+
+
+
+
+app.listen(3001, function(){
+    console.log("express server");
+})
+
+
